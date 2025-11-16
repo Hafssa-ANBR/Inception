@@ -9,17 +9,21 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./web:/var/www/html:ro
+      - wordpress_data:/var/www/html:ro
     networks:
       - inception
     environment:
       - DOMAIN=hanebaro.42.fr
+    depends_on:
+      - wordpress
   wordpress:
     build: requirements/wordpress/.
     container_name: wp-php
+    depends_on:
+      - mariadb
     image: wordpress
     volumes:
-      - ./web:/var/www/html
+      - wordpress_data:/var/www/html
     networks:
       - inception
   mariadb:
@@ -28,8 +32,27 @@ services:
     image: mariadb
     networks:
       - inception
+    volumes:
+      - mariadb_data:/var/lib/mysql
 
 networks:
   inception:
     name: inception
     driver: bridge
+
+volumes:
+  mariadb_data:
+    name: mariadb_data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/hanebaro/data/mariadb
+
+  wordpress_data:
+    name: wordpress_data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/hanebaro/data/wordpress
