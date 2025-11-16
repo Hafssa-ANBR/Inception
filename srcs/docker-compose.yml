@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  nginx:
+    build: requirements/nginx/.
+    container_name: nginx
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./web:/var/www/html:ro
+    networks:
+      - inception
+    environment:
+      - DOMAIN=hanebaro.42.fr
+  wordpress:
+    build: requirements/wordpress/.
+    container_name: wp-php
+    image: wordpress
+    volumes:
+      - ./web:/var/www/html
+    networks:
+      - inception
+  mariadb:
+    build: requirements/mariadb/.
+    container_name: mariadb
+    image: mariadb
+    networks:
+      - inception
+
+networks:
+  inception:
+    name: inception
+    driver: bridge
