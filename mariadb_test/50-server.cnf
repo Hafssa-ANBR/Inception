@@ -1,8 +1,0 @@
-[server]
-skip-host-cache
-skip-name-resolve
-
-[mysqld]
-user = mysql
-bind-address = 0.0.0.0
-init_file = /etc/mysql/init.sql

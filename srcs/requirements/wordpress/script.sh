@@ -28,9 +28,9 @@ fi
 if [ ! -f wp-config.php ]; then
     echo "Creating wp-config.php..."
     ./wp-cli.phar config create \
-        --dbname=wordpress \
-        --dbuser=wpuser \
-        --dbpass=password \
+        --dbname="${MYSQL_DATABASE}" \
+        --dbuser="${MYSQL_USER}" \
+        --dbpass="${MYSQL_PASSWORD}" \
         --dbhost=mariadb \
         --allow-root
 else
@@ -41,11 +41,17 @@ fi
 if ! ./wp-cli.phar core is-installed --allow-root 2>/dev/null; then
     echo "Installing WordPress..."
     ./wp-cli.phar core install \
-        --url=localhost \
+        --url="${DOMAIN}" \
         --title=inception \
-        --admin_user=admin \
-        --admin_password=admin \
-        --admin_email=admin@admin.com \
+        --admin_user="${WP_ADMIN_USER}" \
+        --admin_password="${WP_ADMIN_PASS}" \
+        --admin_email=admin@example.com \
+        --allow-root
+
+    # Create second non-admin WordPress user ,subscriber, contributor
+    ./wp-cli.phar user create "${WP_USER}" user@example.com \
+        --role=contributor \
+        --user_pass="${WP_USER_PASS}" \
         --allow-root
 else
     echo "WordPress already installed, skipping..."
